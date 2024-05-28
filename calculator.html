@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <style>
+
+        .calculator {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid #000000;
+        }
+
+        .calculator-display {
+            height: 80px;
+            background: #222;
+            color: #fff;
+            font-size: 2rem;
+            text-align: right;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calculator-button {
+            width: 100%;
+            height: 60px;
+            font-size: 1.5rem;
+            border-radius: 10px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div>
+            <div class="calculator bg-light">
+                <div id="display" class="calculator-display"></div>
+
+                <div class="row mt-2">
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('7')">7</button></div>
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('8')">8</button></div>
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('9')">9</button></div>
+                    <div class="col-3"><button class="btn btn-warning calculator-button mb-3" onclick="setOperation('/')">/</button></div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('4')">4</button></div>
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('5')">5</button></div>
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('6')">6</button></div>
+                    <div class="col-3"><button class="btn btn-warning calculator-button mb-3" onclick="setOperation('*')">*</button></div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('1')">1</button></div>
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('2')">2</button></div>
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('3')">3</button></div>
+                    <div class="col-3"><button class="btn btn-warning calculator-button mb-3" onclick="setOperation('-')">-</button></div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('0')">0</button></div>
+                    <div class="col-3"><button class="btn btn-secondary calculator-button mb-3" onclick="appendNumber('.')">.</button></div>
+                    <div class="col-3"><button class="btn btn-danger calculator-button mb-3" onclick="clearDisplay()">C</button></div>
+                    <div class="col-3"><button class="btn btn-warning calculator-button mb-3" onclick="setOperation('+')">+</button></div>
+                </div>
+
+                <div class="row mt-2 mb-2">
+                    <div class="col-12"> <button class="btn btn-success calculator-button" onclick="calculate()" style="width: 90%;">=</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        let currentNumber = "";
+        let previousNumber = "";
+        let result = "";
+        let lastOperator = "";
+
+
+        function appendNumber(number)
+        {
+            if (lastOperator == "" && result != "")
+            {
+                clearDisplay();
+            }
+
+            if (number == "." && !(currentNumber.includes("."))) {
+                if (currentNumber == "")
+                {
+                    currentNumber = "0" + number; //esempio 0.5
+                }
+
+                else
+                {
+                    currentNumber += number; //->esempio 3.5
+                }
+            }
+
+            else if (number == "." && currentNumber.includes("."))
+            {
+                return; //c'è già il punto
+            }
+
+            else
+            {
+                currentNumber += number; // altri caratteri che non sono un "."
+            }
+
+            updateDisplay();
+
+        }
+
+        function setOperation(operator) {
+            if (previousNumber == "") //se previous number è uguale a "" , allora non ho ancora il secondo operando per eseguire l'operazione
+            {
+                previousNumber = currentNumber; //passo il numero inserito dall'utente che è contenuto in currentNumber a previousNumber
+                
+            }
+
+            else {
+                //sia previousNumber che currentNumber sono valorizzati, quindi posso eseguire l'operazione
+
+                calculate();
+
+                //passo il risultato a previousNumber, in modo che quando dovrò concatenare ulteriori operazioni, il primo operando sia sempre riportato su previousNumber e il secondo(ultimo) sia su currentNumber
+                previousNumber = result;
+                
+                //resetto currentNumber per un nuovo inserimento
+                currentNumber = "";
+            }
+
+            lastOperator = operator; //salvo l'operatore per sapere dentro il metodo calculate che tipo di operazione devo eseguire
+            currentNumber = ""; //resetto currentNumber per poterlo sfruttare nell'inserimento di un nuovo numero
+        }
+
+        function calculate() {
+            if (currentNumber != "" && previousNumber != "") {
+                switch (lastOperator) {
+                    case "+":
+                        result = parseFloat(previousNumber) + parseFloat(currentNumber);
+                        break;
+
+                    case "-":
+                        result = parseFloat(previousNumber) - parseFloat(currentNumber);
+                        break;
+
+                    case "*":
+                        result = parseFloat(previousNumber) * parseFloat(currentNumber);
+                        break;
+
+                    case "/":
+                        result = parseFloat(previousNumber) / parseFloat(currentNumber);
+                        break;
+                }
+
+                updateResult();
+                lastOperator = "";
+            }
+        }
+
+        function clearDisplay() {
+            
+            display.innerText = "";
+            clearData();
+        }
+
+        function clearData()
+        {
+            currentNumber = "";
+            previousNumber = "";
+            result = "";
+            lastOperator = "";
+        }
+
+
+        function updateDisplay() {
+            display.innerText = currentNumber;
+        }
+
+        function updateResult() {
+            display.innerText = result;
+        }
+
+    </script>
+
+</body>
+</html>
