@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="container">
+        <form>
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="heightLBL">Altezza: </label><br />
+                <input type="number" id="heightTB" />
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="WeightLBL">Peso: </label><br />
+                <input type="number" id="weightTB" />
+            </div>
+
+            <button type="button" class="btn btn-primary" onclick="calculate()">Calcola</button>
+            <br />
+            <br />
+            <span id="BMIValue"></span>
+            <span id="BMICategory"></span>
+
+        </form>
+    </div>
+
+    <script>
+        function calculate()
+        {
+            let height = document.getElementById("heightTB").value;
+            let weight = document.getElementById("weightTB").value;
+            let bmiValue = document.getElementById("BMIValue");
+            let bmiCategory = document.getElementById("BMICategory");
+ 
+
+            if (!isNaN(parseFloat(height)) && !isNaN(parseFloat(weight)))
+            {
+                height /= 100;
+                let result = weight / (height * height);
+                result = result.toFixed(2);
+                bmiValue.innerHTML = result;
+                bmiCategory.innerHTML = getBMICategory(result);
+            }
+
+            else
+            {
+                bmiValue.innerHTML = "errore di conversione";
+            }
+        }
+
+        function getBMICategory(result)
+        {
+            switch (true) {
+                case result < 18.5:
+                    return "Sottopeso";
+
+                case (result >= 18.5 && result < 25):
+                    return "Normopeso";
+
+                case (result >= 25 && result < 30):
+                    return "Sovrappeso";
+
+                case result >= 30:                
+                    return "Obesità";
+            }
+        }
+
+    </script>
+</body>
+</html>
